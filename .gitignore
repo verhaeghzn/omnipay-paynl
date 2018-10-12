@@ -1,3 +1,5 @@
 vendor/*
-scratch/*
 .idea/*
+docs/samples/*
+logs/*
+composer.lock

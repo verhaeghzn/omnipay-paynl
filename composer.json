@@ -3,12 +3,15 @@
     "description": "Pay.nl driver for the Omnipay PHP payment processing library",
     "type": "library",
     "require": {
-        "omnipay/common": "~3"
+        "omnipay/common": "~3",
+        "ext-json": "*"
     },
     "require-dev": {
-        "omnipay/tests": "~3"
+        "omnipay/tests": "~3",
+      "monolog/monolog": "^1.23",
+      "php-coveralls/php-coveralls": "^2.1"
     },
-    "license": "mit",
+    "license": "MIT",
     "authors": [
         {
             "name": "andypieters",
