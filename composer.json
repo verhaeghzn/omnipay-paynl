@@ -1,5 +1,5 @@
 {
-  "name": "andypieters/omnipay-paynl",
+  "name": "paynl/omnipay-paynl",
   "type": "library",
   "description": "Pay.nl driver for the Omnipay payment processing library",
   "keywords": [
