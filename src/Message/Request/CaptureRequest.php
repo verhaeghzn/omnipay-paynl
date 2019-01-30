@@ -18,7 +18,7 @@ class CaptureRequest extends AbstractPaynlRequest
 
     /**
      * @param string $trackTrace
-     * @return CaptureRequest
+     * @return $this
      */
     public function setTrackTrace($trackTrace)
     {

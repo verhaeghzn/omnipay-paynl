@@ -71,26 +71,29 @@ abstract class AbstractPaynlRequest extends AbstractRequest
 
     /**
      * @param string $value
+     * @return $this
      */
     public function setTokenCode($value)
     {
-        $this->setParameter('tokenCode', $value);
+        return $this->setParameter('tokenCode', $value);
     }
 
     /**
      * @param string $value
+     * @return $this
      */
     public function setApiToken($value)
     {
-        $this->setParameter('apiToken', $value);
+        return $this->setParameter('apiToken', $value);
     }
 
     /**
      * @param string $value
+     * @return $this
      */
     public function setServiceId($value)
     {
-        $this->setParameter('serviceId', $value);
+        return $this->setParameter('serviceId', $value);
     }
 
     /**

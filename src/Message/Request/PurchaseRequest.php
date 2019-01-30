@@ -151,10 +151,11 @@ class PurchaseRequest extends AbstractPaynlRequest
 
     /**
      * @param $value array
+     * @return $this
      */
     public function setStatsData($value)
     {
-        $this->setParameter('statsData', $value);
+        return $this->setParameter('statsData', $value);
     }
 
     /**
@@ -167,10 +168,11 @@ class PurchaseRequest extends AbstractPaynlRequest
 
     /**
      * @param $value string
+     * @return $this
      */
     public function setInvoiceDate($value)
     {
-        $this->setParameter('invoiceDate', $value);
+        return $this->setParameter('invoiceDate', $value);
     }
 
     /**
@@ -183,10 +185,11 @@ class PurchaseRequest extends AbstractPaynlRequest
 
     /**
      * @param $value string
+     * @return $this
      */
     public function setDeliveryDate($value)
     {
-        $this->setParameter('deliveryDate', $value);
+        return $this->setParameter('deliveryDate', $value);
     }
 
     /**
@@ -199,10 +202,11 @@ class PurchaseRequest extends AbstractPaynlRequest
 
     /**
      * @param $value string
+     * @return $this
      */
     public function setCustomerReference($value)
     {
-        $this->setParameter('customerReference', $value);
+        return $this->setParameter('customerReference', $value);
     }
 
     public function getCustomerReference()
@@ -212,10 +216,11 @@ class PurchaseRequest extends AbstractPaynlRequest
 
     /**
      * @param $value int Between -10 and 10
+     * @return $this
      */
     public function setCustomerTrust($value)
     {
-        $this->setParameter('customerTrust', $value);
+        return $this->setParameter('customerTrust', $value);
     }
 
     /**
