@@ -45,6 +45,7 @@ class PurchaseRequest extends AbstractPaynlRequest
         $data['paymentOptionId'] = !empty($this->getPaymentMethod()) ? $this->getPaymentMethod() : null;
         $data['paymentOptionSubId'] = !empty($this->getIssuer()) ? $this->getIssuer() : null;
 
+        $data['enduser'] = [];
         if ($card = $this->getCard()) {
             $billingAddressParts = $this->getAddressParts($card->getBillingAddress1() . ' ' . $card->getBillingAddress2());
             $shippingAddressParts = ($card->getShippingAddress1() ? $this->getAddressParts($card->getShippingAddress1() . ' ' . $card->getShippingAddress2()) : $billingAddressParts);
@@ -79,6 +80,17 @@ class PurchaseRequest extends AbstractPaynlRequest
                 )
             ];
         }
+
+        if (!empty($this->getCustomerReference())) {
+            $data['enduser']['customerReference'] = $this->getCustomerReference();
+        }
+
+        if (!empty($this->getCustomerTrust())) {
+            $data['enduser']['customerTrust'] = $this->getCustomerTrust();
+        }
+
+        $data['saleData'] = [];
+
         if ($items = $this->getItems()) {
             $data['saleData'] = [
                 'orderData' => array_map(function ($item) {
@@ -105,6 +117,23 @@ class PurchaseRequest extends AbstractPaynlRequest
             ];
         }
 
+        if ($statsData = $this->getStatsData()) {
+            // Could be someone erroneously not set an array
+            if (is_array($statsData)) {
+                $allowableParams = ["promotorId", "info", "tool", "extra1", "extra2", "extra3", "transferData"];
+                $data['statsData'] = array_filter($statsData, function($k) use ($allowableParams) {
+                    return in_array($k, $allowableParams);
+                }, ARRAY_FILTER_USE_KEY);
+            }
+        }
+
+        if (!empty($this->getInvoiceDate())) {
+            $data['saleData']['invoiceDate'] = $this->getInvoiceDate();
+        }
+        if (!empty($this->getDeliveryDate())) {
+            $data['saleData']['deliveryDate'] = $this->getDeliveryDate();
+        }
+
 
         return $data;
     }
@@ -118,6 +147,83 @@ class PurchaseRequest extends AbstractPaynlRequest
         $responseData = $this->sendRequest('start', $data);
 
         return $this->response = new PurchaseResponse($this, $responseData);
+    }
+
+    /**
+     * @param $value array
+     */
+    public function setStatsData($value)
+    {
+        $this->setParameter('statsData', $value);
+    }
+
+    /**
+     * @return array
+     */
+    public function getStatsData()
+    {
+        return $this->getParameter('statsData');
+    }
+
+    /**
+     * @param $value string
+     */
+    public function setInvoiceDate($value)
+    {
+        $this->setParameter('invoiceDate', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getInvoiceDate()
+    {
+        return $this->getParameter('invoiceDate');
+    }
+
+    /**
+     * @param $value string
+     */
+    public function setDeliveryDate($value)
+    {
+        $this->setParameter('deliveryDate', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeliveryDate()
+    {
+        return $this->getParameter('deliveryDate');
+    }
+
+    /**
+     * @param $value string
+     */
+    public function setCustomerReference($value)
+    {
+        $this->setParameter('customerReference', $value);
+    }
+
+    public function getCustomerReference()
+    {
+        return $this->getParameter('customerReference');
+    }
+
+    /**
+     * @param $value int Between -10 and 10
+     */
+    public function setCustomerTrust($value)
+    {
+        $this->setParameter('customerTrust', $value);
+    }
+
+    /**
+     * @return int
+     */
+    public function getCustomerTrust()
+    {
+        return $this->getParameter('customerTrust');
     }
 
     /**

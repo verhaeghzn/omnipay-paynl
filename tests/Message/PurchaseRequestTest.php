@@ -92,6 +92,80 @@ class PurchaseRequestTest extends TestCase
 
     }
 
+    public function testStatsData()
+    {
+        $this->request->setAmount(1);
+        $this->request->setClientIp('10.0.0.5');
+        $this->request->setReturnUrl('https://www.pay.nl');
+
+        $statsData = [
+            'promotorId' => uniqid(),
+            'info' => uniqid(),
+            'tool' => uniqid(),
+            'extra1' => uniqid(),
+            'extra2' => uniqid(),
+            'extra3' => uniqid()
+        ];
+
+        $this->request->setStatsData($statsData);
+
+        $data = $this->request->getData();
+
+        $this->assertArrayHasKey('statsData', $data);
+        $this->assertEquals($statsData['promotorId'], $data['statsData']['promotorId']);
+        $this->assertEquals($statsData['info'], $data['statsData']['info']);
+        $this->assertEquals($statsData['tool'], $data['statsData']['tool']);
+        $this->assertEquals($statsData['extra1'], $data['statsData']['extra1']);
+        $this->assertEquals($statsData['extra2'], $data['statsData']['extra2']);
+        $this->assertEquals($statsData['extra3'], $data['statsData']['extra3']);
+    }
+
+    public function testDates()
+    {
+        $this->request->setAmount(1);
+        $this->request->setClientIp('10.0.0.5');
+        $this->request->setReturnUrl('https://www.pay.nl');
+
+        $invoiceDate = new \DateTime('now');
+        $deliveryDate = new \DateTime('tomorrow');
+
+        $invoiceDate = $invoiceDate->format('d-m-Y');
+        $deliveryDate = $deliveryDate->format('d-m-Y');
+
+        $this->request->setInvoiceDate($invoiceDate);
+        $this->request->setDeliveryDate($deliveryDate);
+
+        $data = $this->request->getData();
+
+        $this->assertArrayHasKey('saleData', $data);
+        $this->assertArrayHasKey('invoiceDate', $data['saleData']);
+        $this->assertArrayHasKey('deliveryDate', $data['saleData']);
+        $this->assertEquals($invoiceDate, $data['saleData']['invoiceDate']);
+        $this->assertEquals($deliveryDate, $data['saleData']['deliveryDate']);
+    }
+
+    public function testCustomerData()
+    {
+        $this->request->setAmount(1);
+        $this->request->setClientIp('10.0.0.5');
+        $this->request->setReturnUrl('https://www.pay.nl');
+
+        $customerReference = uniqid();
+        $customerTrust = rand(-10, 10);
+
+        $this->request->setCustomerReference($customerReference);
+        $this->request->setCustomerTrust($customerTrust);
+
+        $data = $this->request->getData();
+
+        $this->assertArrayHasKey('enduser', $data);
+        $this->assertArrayHasKey('customerReference', $data['enduser']);
+        $this->assertArrayHasKey('customerTrust', $data['enduser']);
+        $this->assertEquals($customerReference, $data['enduser']['customerReference']);
+        $this->assertEquals($customerTrust, $data['enduser']['customerTrust']);
+    }
+
+
     public function testCardInvoiceAddress()
     {
         $this->request->setAmount(1);
