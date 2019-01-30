@@ -85,7 +85,7 @@ class PurchaseRequest extends AbstractPaynlRequest
             $data['enduser']['customerReference'] = $this->getCustomerReference();
         }
 
-        if (!empty($this->getCustomerTrust())) {
+        if (is_numeric($this->getCustomerTrust())) {
             $data['enduser']['customerTrust'] = $this->getCustomerTrust();
         }
 
