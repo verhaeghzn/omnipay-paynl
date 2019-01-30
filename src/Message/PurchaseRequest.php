@@ -9,7 +9,8 @@ use Omnipay\Common\Item;
  *
  * @method \Omnipay\Paynl\Message\PurchaseResponse send()
  */
-class PurchaseRequest extends AbstractRequest {
+class PurchaseRequest extends AbstractRequest
+{
 
     /**
      * Regex to find streetname, housenumber and suffix out of a street string
@@ -21,7 +22,8 @@ class PurchaseRequest extends AbstractRequest {
      * Return the data formatted for PAY.nl
      * @return array
      */
-    public function getData() {
+    public function getData()
+    {
         $this->validate('apitoken', 'serviceId', 'amount', 'description', 'returnUrl');
 
         $data['amount'] = round($this->getAmount() * 100);
@@ -39,10 +41,10 @@ class PurchaseRequest extends AbstractRequest {
             $data['transaction']['orderExchangeUrl'] = $this->getNotifyUrl();
         }
 
-        if($this->getCurrency()){
+        if ($this->getCurrency()) {
             $data['transaction']['currency'] = $this->getCurrency();
         }
-
+        $data['enduser'] = array();
         if ($card = $this->getCard()) {
             $billingAddressParts = $this->getAddressParts($card->getBillingAddress1());
             $shippingAddressParts = ($card->getShippingAddress1() ? $this->getAddressParts($card->getShippingAddress1()) : $billingAddressParts);
@@ -77,10 +79,17 @@ class PurchaseRequest extends AbstractRequest {
                 )
             );
         }
+        if(!empty($this->getCustomerReference())){
+            $data['enduser']['customerReference'] = $this->getCustomerReference();
+        }
+        if(is_numeric($this->getCustomerTrust())){
+            $data['enduser']['customerTrust'] = $this->getCustomerTrust();
+        }
 
+        $data['saleData'] = array();
         if ($items = $this->getItems()) {
             $data['saleData'] = array(
-                'orderData' => array_map(function($item) {
+                'orderData' => array_map(function ($item) {
                     /** @var Item $item */
                     $data = array(
                         'description' => $item->getDescription(),
@@ -108,8 +117,110 @@ class PurchaseRequest extends AbstractRequest {
             );
         }
 
+        if(!empty($this->getInvoiceDate())){
+            $data['saleData']['invoiceDate'] = $this->getInvoiceDate();
+        }
+        if(!empty($this->getDeliveryDate())){
+            $data['saleData']['deliveryDate'] = $this->getDeliveryDate();
+        }
+
+        if ($statsData = $this->getStatsData()) {
+            // Could be someone erroneously not set an array
+            if (is_array($statsData)) {
+                $allowableParams = ["promotorId", "info", "tool", "extra1", "extra2", "extra3", "transferData"];
+                $data['statsData'] = array_filter($statsData, function ($k) use ($allowableParams) {
+                    return in_array($k, $allowableParams);
+                }, ARRAY_FILTER_USE_KEY);
+            }
+        }
+
         $data['testMode'] = $this->getTestMode() ? 1 : 0;
         return $data;
+    }
+
+    /**
+     * @return array
+     */
+    public function getStatsData()
+    {
+        return $this->getParameter('statsData');
+    }
+
+    /**
+     * @param $value array
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
+    public function setStatsData($value)
+    {
+        return $this->setParameter('statsData', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getInvoiceDate()
+    {
+        return $this->getParameter('invoiceDate');
+    }
+
+    /**
+     * @param $value string
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
+    public function setInvoiceDate($value)
+    {
+        return $this->setParameter('invoiceDate', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeliveryDate()
+    {
+        return $this->getParameter('deliveryDate');
+    }
+
+    /**
+     * @param $value string
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
+    public function setDeliveryDate($value)
+    {
+        return $this->setParameter('deliveryDate', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomerReference()
+    {
+        return $this->getParameter('customerReference');
+    }
+
+    /**
+     * @param $value string
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
+    public function setCustomerReference($value)
+    {
+        return $this->setParameter('customerReference', $value);
+    }
+
+    /**
+     * @return integer
+     */
+    public function getCustomerTrust()
+    {
+        return $this->getParameter('customerTrust');
+    }
+
+    /**
+     * @param $value integer
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
+    public function setCustomerTrust($value)
+    {
+        return $this->setParameter('customerTrust', $value);
     }
 
     /**
@@ -117,7 +228,8 @@ class PurchaseRequest extends AbstractRequest {
      * @param array $data
      * @return AbstractResponse
      */
-    public function sendData($data) {
+    public function sendData($data)
+    {
         $httpResponse = $this->sendRequest('POST', 'transaction/start', $data);
         return $this->response = new PurchaseResponse($this, $httpResponse->json());
     }
@@ -127,9 +239,10 @@ class PurchaseRequest extends AbstractRequest {
      * @param string $address
      * @return array
      */
-    public function getAddressParts($address) {
-            $addressParts = [];
-            preg_match($this->addressRegex, $address, $addressParts);
-            return array_filter($addressParts, 'trim');
+    public function getAddressParts($address)
+    {
+        $addressParts = [];
+        preg_match($this->addressRegex, $address, $addressParts);
+        return array_filter($addressParts, 'trim');
     }
 }
