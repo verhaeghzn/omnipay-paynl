@@ -40,6 +40,7 @@ class PurchaseRequest extends AbstractPaynlRequest
         $data['transaction']['description'] = $this->getDescription() ?: null;
         $data['transaction']['currency'] = !empty($this->getCurrency()) ? $this->getCurrency() : 'EUR';
         $data['transaction']['orderExchangeUrl'] = !empty($this->getNotifyUrl()) ? $this->getNotifyUrl() : null;
+        $data['transaction']['orderNumber'] = !empty($this->getOrderNumber()) ? $this->getOrderNumber() : null;
 
         $data['testMode'] = $this->getTestMode() ? 1 : 0;
         $data['paymentOptionId'] = !empty($this->getPaymentMethod()) ? $this->getPaymentMethod() : null;
@@ -124,6 +125,7 @@ class PurchaseRequest extends AbstractPaynlRequest
                 $data['statsData'] = array_filter($statsData, function($k) use ($allowableParams) {
                     return in_array($k, $allowableParams);
                 }, ARRAY_FILTER_USE_KEY);
+              $data['statsData']['object'] = 'omnipay';
             }
         }
 
@@ -164,6 +166,23 @@ class PurchaseRequest extends AbstractPaynlRequest
     public function getStatsData()
     {
         return $this->getParameter('statsData');
+    }
+
+    /**
+     * @param $value array
+     * @return $this
+     */
+    public function setOrderNumber($value)
+    {
+      return $this->setParameter('orderNumber', $value);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOrderNumber()
+    {
+      return $this->getParameter('orderNumber');
     }
 
     /**
