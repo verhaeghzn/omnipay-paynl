@@ -169,6 +169,8 @@ class PurchaseRequest extends AbstractPaynlRequest
     }
 
     /**
+     * Set the ordernumber
+     *
      * @param $value array
      * @return $this
      */
