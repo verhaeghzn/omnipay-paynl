@@ -128,20 +128,25 @@ class PurchaseRequestTest extends TestCase
 
         $invoiceDate = new \DateTime('now');
         $deliveryDate = new \DateTime('tomorrow');
+        $expireDate = new \DateTime('now + 4 hours');
 
         $invoiceDate = $invoiceDate->format('d-m-Y');
         $deliveryDate = $deliveryDate->format('d-m-Y');
+        $expireDate = $expireDate->format('d-m-Y H:i:s');
 
         $this->request->setInvoiceDate($invoiceDate);
         $this->request->setDeliveryDate($deliveryDate);
+        $this->request->setExpireDate($expireDate);
 
         $data = $this->request->getData();
 
         $this->assertArrayHasKey('saleData', $data);
         $this->assertArrayHasKey('invoiceDate', $data['saleData']);
         $this->assertArrayHasKey('deliveryDate', $data['saleData']);
+        $this->assertArrayHasKey('expireDate', $data['transaction']);
         $this->assertEquals($invoiceDate, $data['saleData']['invoiceDate']);
         $this->assertEquals($deliveryDate, $data['saleData']['deliveryDate']);
+        $this->assertEquals($expireDate, $data['transaction']['expireDate']);
     }
 
     public function testCustomerData()
