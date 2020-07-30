@@ -41,6 +41,7 @@ class PurchaseRequest extends AbstractPaynlRequest
         $data['transaction']['currency'] = !empty($this->getCurrency()) ? $this->getCurrency() : 'EUR';
         $data['transaction']['orderExchangeUrl'] = !empty($this->getNotifyUrl()) ? $this->getNotifyUrl() : null;
         $data['transaction']['orderNumber'] = !empty($this->getOrderNumber()) ? $this->getOrderNumber() : null;
+        $data['transaction']['expireDate'] = !empty($this->getExpireDate()) ? $this->getExpireDate() : null;
 
         $data['testMode'] = $this->getTestMode() ? 1 : 0;
         $data['paymentOptionId'] = !empty($this->getPaymentMethod()) ? $this->getPaymentMethod() : null;
@@ -185,6 +186,25 @@ class PurchaseRequest extends AbstractPaynlRequest
     public function getOrderNumber()
     {
       return $this->getParameter('orderNumber');
+    }
+
+    /**
+     * Set the expireDate
+     *
+     * @param $value array
+     * @return $this
+     */
+    public function setExpireDate($value)
+    {
+        return $this->setParameter('expireDate', $value);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExpireDate()
+    {
+        return $this->getParameter('expireDate');
     }
 
     /**
