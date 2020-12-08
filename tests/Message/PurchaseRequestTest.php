@@ -4,9 +4,11 @@ namespace Omnipay\Paynl\Test\Message;
 
 
 use Omnipay\Common\CreditCard;
+use Omnipay\Common\Message\RedirectResponseInterface;
 use Omnipay\Paynl\Message\Request\PurchaseRequest;
 use Omnipay\Paynl\Message\Response\PurchaseResponse;
 use Omnipay\Tests\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class PurchaseRequestTest extends TestCase
 {
@@ -35,6 +37,8 @@ class PurchaseRequestTest extends TestCase
 
         $this->assertEquals('GET', $response->getRedirectMethod());
         $this->assertNull($response->getRedirectData());
+        $this->assertInstanceOf(RedirectResponseInterface::class, $response);
+        $this->assertInstanceOf(RedirectResponse::class, $response->getRedirectResponse());
     }
 
     public function testCardEnduser()

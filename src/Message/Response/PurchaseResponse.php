@@ -2,8 +2,9 @@
 
 namespace Omnipay\Paynl\Message\Response;
 
+use Omnipay\Common\Message\RedirectResponseInterface;
 
-class PurchaseResponse extends AbstractPaynlResponse
+class PurchaseResponse extends AbstractPaynlResponse implements RedirectResponseInterface
 {
     /**
      * When you do a `purchase` the request is never successful because
