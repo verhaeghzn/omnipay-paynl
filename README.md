@@ -90,55 +90,81 @@ The plugin has now been updated
 
 # Usage
 
+
+PAY. items
+```
+# Use PAY. Item class
+use Omnipay\Paynl\Common\Item;
+
+# Add items to transaction
+$arrItems = array();
+$item = new Item();
+$item->setProductId('SKU01')
+        ->setProductType('ARTICLE')
+        ->setVatPercentage(21)
+        ->setDescription('Description')
+        ->setName('PAY. article')
+        ->setPrice('10')
+        ->setQuantity(4);
+$arrItems[] = $item;
+
+$item = new Item();
+$item->setProductId('SHIP01')
+        ->setProductType('SHIPPING')
+        ->setVatPercentage(21)
+        ->setDescription('Description')
+        ->setName('PAY. shipping')
+        ->setPrice('5')
+        ->setQuantity(1);
+$arrItems[] = $item;
+
+$item = new Item();
+$item->setProductId('SKU02')
+        ->setProductType('DISCOUNT')
+        ->setVatPercentage(21)
+        ->setDescription('Description')
+        ->setName('PAY. promotion')
+        ->setPrice('1')
+        ->setQuantity(1);
+$arrItems[] = $item;
+```
+
 Start a transaction
 
 ```
 # Send purchase request
 $response = $gateway->purchase(
     [
-        'amount' => '10.00',
+        'amount' => '46.00',
         'currency' => 'USD',
         'transactionReference' => 'referenceID1',
         'clientIp' => '192.168.192.12',
-        'returnUrl' => 'https://omnipay/return',
-        'items' => array(
-            array(
-                'name' => 10,
-                'price' => '5.00',
-                'description' => 'Product 1 Desc',
-                'quantity' => 2,
-                'ProductId' => 1
-            ),
-            array(
-                'name' => 12,
-                'price' => '5.00',
-                'description' => 'Shipping for Product 1',
-                'quantity' => 1,
-                'ProductId' => 1
-            ),
-            array(
-                'name' => 12,
-                'price' => '0.00',
-                'description' => 'Promotion',
-                'quantity' => 1,
-                'ProductId' => 1
-            ),
-        ),
+        'returnUrl' => 'http://dev.local:8080/pay.php',
+        'items' => $arrItems,
         'card' => array(
             'firstName' => 'Example',
             'lastName' => 'User',
-            'number' => '1111111111111111',
-            'expiryMonth' => 7,
-            'expiryYear' => 2022,
-            'cvv' => 123,
-            'address1' => '123 Shipping St',
-            'address2' => 'Shipsville',
-            'city' => 'Shipstown',
-            'postcode' => '54321',
-            'state' => 'NY',
-            'country' => 'US',
-            'phone' => '(123) 123-6543',
+            'gender' => 'M',
+            'birthday' => '01-02-1992',
+            'phone' => '1111111111111111',
             'email' => 'john@example.com',
+            'country' => 'NL',
+
+            'shippingAddress1' => 'Shippingstreet 1B',
+            'shippingAddress2' => '',
+            'shippingCity' => 'Shipingtown',
+            'shippingPostcode' => '1234AB',
+            'shippingState' => '',
+            'country' => 'NL',
+
+            'billingFirstName' => 'Billingexample',
+            'billingLastName' => 'Billinguser',
+            'billingAddress1' => 'Billingstreet 1B',
+            'billingAddress2' => '',
+            'billingCity' => 'Billingtown',
+            'billingPostcode' => '1234AB',
+            'billingState' => '',
+            'country' => 'NL'                     
         )
     ]
 )->send();
@@ -147,13 +173,13 @@ $response = $gateway->purchase(
 if ($response->isSuccessful()) {
      
     # Payment was successful
-    print_r($response);
+    var_dump($response);
  
 } elseif ($response->isRedirect()) {
      
     # Redirect to offsite payment gateway
-    # $response->redirect() 
-    print_r($response);
+    # $response->redirect();
+    var_dump($response);
  
 } else {
  
@@ -166,7 +192,7 @@ Refund a transaction
 ```
 $response = $gateway->refund([
     'transactionReference' => "PAY. transactionId",
-    'amount' => '10.00',
+    'amount' => '46.00',
     'currency' => 'USD',
     'transactionId' => 765897
 ])->send();
@@ -188,32 +214,7 @@ Capture a transaction
 ```
 $response = $gateway->capture([
     'transactionReference' => "PAY. transactionId",
-    'amount' => '10.00',
-    'currency' => 'USD',
-    'transactionId' => 765897,
-    'items' => array(
-            array(
-                'name' => 10,
-                'price' => '5.00',
-                'description' => 'Product 1 Desc',
-                'quantity' => 2,
-                'ProductId' => 1
-            ),
-            array(
-                'name' => 12,
-                'price' => '5.00',
-                'description' => 'Shipping for Product 1',
-                'quantity' => 1,
-                'ProductId' => 1
-            ),
-            array(
-                'name' => 12,
-                'price' => '0.00',
-                'description' => 'Promotion',
-                'quantity' => 1,
-                'ProductId' => 1
-            ),
-        ),
+    'items' => $arrItems
 ])->send();
 
 if ($response->isSuccessful()) {
