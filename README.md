@@ -136,10 +136,10 @@ Start a transaction
 $response = $gateway->purchase(
     [
         'amount' => '46.00',
-        'currency' => 'USD',
+        'currency' => 'EUR',
         'transactionReference' => 'referenceID1',
         'clientIp' => '192.168.192.12',
-        'returnUrl' => 'http://dev.local:8080/pay.php',
+        'returnUrl' => 'http://www.yourdomain.com/return_from_pay.php',
         'items' => $arrItems,
         'card' => array(
             'firstName' => 'Example',
