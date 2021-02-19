@@ -178,9 +178,8 @@ if ($response->isSuccessful()) {
 } elseif ($response->isRedirect()) {
      
     # Redirect to offsite payment gateway
-    # $response->redirect();
-    var_dump($response);
- 
+    $response->redirect();
+     
 } else {
  
     # Payment failed
