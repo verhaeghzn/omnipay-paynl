@@ -64,13 +64,21 @@ class FetchTransactionResponse extends AbstractResponse
     }
 
     /**
-     * @return float|null
+     * @return float|0
      */
     public function getAmount()
     {
-        return isset($this->data['paymentDetails']['paidAmount']) ? $this->data['paymentDetails']['paidAmount'] / 100 : null;
+        return isset($this->data['paymentDetails']['paidAmount']) ? $this->data['paymentDetails']['paidAmount'] / 100 : 0;
     }
-
+    
+    /**
+     * @return float|0
+     */
+    public function getStornoAmount()
+    {
+        return (isset($this->data['stornoDetails']['stornoAmount'])&&($this->data['stornoDetails']['stornoAmount'] != '')) ? $this->data['stornoDetails']['stornoAmount'] / 100 : 0;
+    }
+    
     /**
      * @return bool
      */
